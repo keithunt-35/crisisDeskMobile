@@ -24,9 +24,14 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncidentDetailScreen(
+    incidentId: String,
     viewModel: IncidentDetailViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onBackClick: () -> Unit
 ) {
+    LaunchedEffect(incidentId) {
+        viewModel.initIncident(incidentId)
+    }
+
     val incidentState by viewModel.incidentState.collectAsState()
     val timelineState by viewModel.timelineState.collectAsState()
 
