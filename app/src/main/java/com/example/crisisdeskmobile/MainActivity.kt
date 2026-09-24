@@ -117,8 +117,10 @@ fun CrisisDeskAppNavHost(authViewModel: AuthViewModel) {
             )
         }
 
-        composable("incident_detail/{incidentId}") {
+        composable("incident_detail/{incidentId}") { backStackEntry ->
+            val incidentId = backStackEntry.arguments?.getString("incidentId") ?: ""
             IncidentDetailScreen(
+                incidentId = incidentId,
                 onBackClick = {
                     navController.popBackStack()
                 }

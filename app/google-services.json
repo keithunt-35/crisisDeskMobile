@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1234567890",
-    "project_id": "crisis-desk-mobile",
-    "storage_bucket": "crisis-desk-mobile.appspot.com"
+    "project_number": "425618036058",
+    "project_id": "crisisdesk",
+    "storage_bucket": "crisisdesk.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1234567890:android:1234567890abcdef",
+        "mobilesdk_app_id": "1:425618036058:android:414734d7d717f14e948f63",
         "android_client_info": {
           "package_name": "com.example.crisisdeskmobile"
         }
@@ -15,12 +15,12 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDUMMYKEYFORBUILDPURPOSESONLY00000"
+          "current_key": "AIzaSyDY23p8cJaoR6BTahBSF4dGCeMw0xwrTv4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth": []
+          "other_platform_oauth_client": []
         }
       }
     }
