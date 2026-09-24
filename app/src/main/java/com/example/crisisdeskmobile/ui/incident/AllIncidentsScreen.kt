@@ -28,7 +28,9 @@ fun AllIncidentsScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedSeverity by viewModel.selectedSeverity.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val selectedStatus by viewModel.selectedStatus.collectAsState()
 
+    val statuses = listOf("Active", "Resolved", "All")
     val severities = listOf("All", "Critical", "High", "Medium", "Low")
     val categories = listOf("All", "General", "AV", "Facilities", "Security", "VIP", "Catering")
 
@@ -61,6 +63,21 @@ fun AllIncidentsScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            // Status Filter Chips (Active vs Resolved)
+            Text(text = "Status", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(statuses) { status ->
+                    FilterChip(
+                        selected = selectedStatus == status,
+                        onClick = { viewModel.selectedStatus.value = status },
+                        label = { Text(status) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Severity Filter Chips
             Text(text = "Filter by Severity", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)

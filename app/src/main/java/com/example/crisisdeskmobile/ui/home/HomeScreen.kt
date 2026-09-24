@@ -27,14 +27,17 @@ fun HomeScreen(
     val incidentsState by viewModel.incidentsState.collectAsState()
     val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
 
-    val incidents = when (val state = incidentsState) {
+    val allIncidents = when (val state = incidentsState) {
         is Resource.Success -> state.data
         else -> emptyList()
     }
 
-    val openCount = incidents.count { it.status == "Open" || it.status == "In Progress" }
-    val criticalCount = incidents.count { it.severity == "Critical" && it.status != "Resolved" }
-    val assignedCount = incidents.count { it.assignedTo == currentUser?.uid && it.status != "Resolved" }
+    // Put resolved/finished incidents away from active home feed
+    val activeIncidents = allIncidents.filter { it.status != "Resolved" }
+
+    val openCount = activeIncidents.count { it.status == "Open" || it.status == "In Progress" }
+    val criticalCount = activeIncidents.count { it.severity == "Critical" }
+    val assignedCount = activeIncidents.count { it.assignedTo == currentUser?.uid }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -111,7 +114,7 @@ fun HomeScreen(
                 }
             }
 
-            // 3. Section Title: Recent Incidents
+            // 3. Section Title: Recent Active Incidents
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -119,13 +122,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Recent Incident Feed",
+                        text = "Active Incidents Feed",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "${incidents.size} total",
+                        text = "${activeIncidents.size} active",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
@@ -161,7 +164,7 @@ fun HomeScreen(
                     }
                 }
                 is Resource.Success -> {
-                    if (state.data.isEmpty()) {
+                    if (activeIncidents.isEmpty()) {
                         item {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -176,13 +179,13 @@ fun HomeScreen(
                                     Text(text = "🛡️", fontSize = 40.sp)
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = "No Incidents Reported",
+                                        text = "No Active Incidents",
                                         fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Tap 'Log Incident' below to report an emergency.",
+                                        text = "All systems clear! Tap 'Log Incident' to report a new issue.",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                     )
@@ -190,8 +193,8 @@ fun HomeScreen(
                             }
                         }
                     } else {
-                        items(state.data.size) { index ->
-                            val incident = state.data[index]
+                        items(activeIncidents.size) { index ->
+                            val incident = activeIncidents[index]
                             Spacer(modifier = Modifier.height(8.dp))
                             IncidentCard(incident = incident, onClick = { onIncidentClick(incident.id) })
                         }
@@ -289,7 +292,8 @@ fun IncidentCard(incident: Incident, onClick: () -> Unit = {}) {
                             text = incident.severity,
                             style = MaterialTheme.typography.labelSmall,
                             color = severityColor,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                         )
                     }
 
@@ -303,7 +307,8 @@ fun IncidentCard(incident: Incident, onClick: () -> Unit = {}) {
                             text = incident.status,
                             style = MaterialTheme.typography.labelSmall,
                             color = statusColor,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                         )
                     }
                 }

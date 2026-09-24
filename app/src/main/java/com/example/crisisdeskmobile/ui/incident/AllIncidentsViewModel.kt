@@ -17,13 +17,15 @@ class AllIncidentsViewModel : ViewModel() {
     val searchQuery = MutableStateFlow("")
     val selectedSeverity = MutableStateFlow("All") // "All", "Critical", "High", "Medium", "Low"
     val selectedCategory = MutableStateFlow("All") // "All", "AV", "Facilities", "Security", etc.
+    val selectedStatus = MutableStateFlow("Active") // "Active" (excludes resolved), "Resolved", "All"
 
     val filteredIncidents: StateFlow<Resource<List<Incident>>> = combine(
         _allIncidents,
         searchQuery,
         selectedSeverity,
-        selectedCategory
-    ) { incidentsResource, query, severity, category ->
+        selectedCategory,
+        selectedStatus
+    ) { incidentsResource, query, severity, category, status ->
         if (incidentsResource is Resource.Success) {
             val filtered = incidentsResource.data.filter { incident ->
                 val matchesSearch = query.isBlank() ||
@@ -33,8 +35,13 @@ class AllIncidentsViewModel : ViewModel() {
 
                 val matchesSeverity = severity == "All" || incident.severity == severity
                 val matchesCategory = category == "All" || incident.category == category
+                val matchesStatus = when (status) {
+                    "Active" -> incident.status != "Resolved"
+                    "Resolved" -> incident.status == "Resolved"
+                    else -> true
+                }
 
-                matchesSearch && matchesSeverity && matchesCategory
+                matchesSearch && matchesSeverity && matchesCategory && matchesStatus
             }
             Resource.Success(filtered)
         } else {
