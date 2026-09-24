@@ -1,6 +1,7 @@
 package com.example.crisisdeskmobile.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +21,8 @@ import com.example.crisisdeskmobile.util.Resource
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    onLogIncidentClick: () -> Unit
+    onLogIncidentClick: () -> Unit,
+    onIncidentClick: (String) -> Unit
 ) {
     val incidentsState by viewModel.incidentsState.collectAsState()
     val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
@@ -191,7 +193,7 @@ fun HomeScreen(
                         items(state.data.size) { index ->
                             val incident = state.data[index]
                             Spacer(modifier = Modifier.height(8.dp))
-                            IncidentCard(incident = incident)
+                            IncidentCard(incident = incident, onClick = { onIncidentClick(incident.id) })
                         }
                     }
                 }
@@ -233,7 +235,7 @@ fun StatCard(title: String, count: String, color: Color) {
 }
 
 @Composable
-fun IncidentCard(incident: Incident) {
+fun IncidentCard(incident: Incident, onClick: () -> Unit = {}) {
     val severityColor = when (incident.severity) {
         "Critical" -> SeverityCritical
         "High" -> SeverityHigh
@@ -248,7 +250,9 @@ fun IncidentCard(incident: Incident) {
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

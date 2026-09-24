@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.crisisdeskmobile.ui.auth.AuthViewModel
 import com.example.crisisdeskmobile.ui.auth.LoginScreen
 import com.example.crisisdeskmobile.ui.auth.RegisterScreen
+import com.example.crisisdeskmobile.ui.incident.IncidentDetailScreen
 import com.example.crisisdeskmobile.ui.incident.LogIncidentScreen
 import com.example.crisisdeskmobile.ui.main.MainAppScreen
 import com.example.crisisdeskmobile.ui.theme.CrisisDeskMobileTheme
@@ -98,6 +99,9 @@ fun CrisisDeskAppNavHost(authViewModel: AuthViewModel) {
                 },
                 onNavigateToLogIncident = {
                     navController.navigate("log_incident")
+                },
+                onIncidentClick = { incidentId ->
+                    navController.navigate("incident_detail/$incidentId")
                 }
             )
         }
@@ -107,6 +111,14 @@ fun CrisisDeskAppNavHost(authViewModel: AuthViewModel) {
                 onIncidentLogged = {
                     navController.popBackStack()
                 },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("incident_detail/{incidentId}") {
+            IncidentDetailScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }

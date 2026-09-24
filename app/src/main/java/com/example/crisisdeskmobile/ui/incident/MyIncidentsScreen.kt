@@ -16,7 +16,8 @@ import com.example.crisisdeskmobile.util.Resource
 
 @Composable
 fun MyIncidentsScreen(
-    viewModel: MyIncidentsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: MyIncidentsViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    onIncidentClick: (String) -> Unit
 ) {
     val myIncidentsState by viewModel.myIncidentsState.collectAsState()
 
@@ -106,7 +107,7 @@ fun MyIncidentsScreen(
                         items(state.data.size) { index ->
                             val incident = state.data[index]
                             Spacer(modifier = Modifier.height(4.dp))
-                            IncidentCard(incident = incident)
+                            IncidentCard(incident = incident, onClick = { onIncidentClick(incident.id) })
                         }
                     }
                 }

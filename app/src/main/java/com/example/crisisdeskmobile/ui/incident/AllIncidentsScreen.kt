@@ -21,7 +21,8 @@ import com.example.crisisdeskmobile.util.Resource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllIncidentsScreen(
-    viewModel: AllIncidentsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: AllIncidentsViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    onIncidentClick: (String) -> Unit
 ) {
     val filteredState by viewModel.filteredIncidents.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -156,7 +157,7 @@ fun AllIncidentsScreen(
                         } else {
                             items(state.data.size) { index ->
                                 val incident = state.data[index]
-                                IncidentCard(incident = incident)
+                                IncidentCard(incident = incident, onClick = { onIncidentClick(incident.id) })
                             }
                         }
                     }

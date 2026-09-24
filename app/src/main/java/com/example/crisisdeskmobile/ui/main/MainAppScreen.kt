@@ -25,6 +25,7 @@ import com.example.crisisdeskmobile.ui.auth.AuthViewModel
 import com.example.crisisdeskmobile.ui.home.HomeScreen
 import com.example.crisisdeskmobile.ui.incident.AllIncidentsScreen
 import com.example.crisisdeskmobile.ui.incident.MyIncidentsScreen
+import com.example.crisisdeskmobile.ui.profile.ProfileScreen
 import com.example.crisisdeskmobile.ui.theme.SeverityCritical
 import com.example.crisisdeskmobile.ui.theme.SeverityHigh
 import com.example.crisisdeskmobile.ui.theme.SeverityResolved
@@ -41,7 +42,8 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
 fun MainAppScreen(
     authViewModel: AuthViewModel,
     onLogout: () -> Unit,
-    onNavigateToLogIncident: () -> Unit
+    onNavigateToLogIncident: () -> Unit,
+    onIncidentClick: (String) -> Unit
 ) {
     val navController = rememberNavController()
     val items = listOf(
@@ -130,97 +132,22 @@ fun MainAppScreen(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onLogIncidentClick = onNavigateToLogIncident
+                    onLogIncidentClick = onNavigateToLogIncident,
+                    onIncidentClick = onIncidentClick
                 )
             }
             composable(Screen.MyIncidents.route) {
-                MyIncidentsScreen()
+                MyIncidentsScreen(
+                    onIncidentClick = onIncidentClick
+                )
             }
             composable(Screen.AllIncidents.route) {
-                AllIncidentsScreen()
+                AllIncidentsScreen(
+                    onIncidentClick = onIncidentClick
+                )
             }
             composable(Screen.Profile.route) {
-                ProfileScreen(authViewModel = authViewModel, onLogout = onLogout)
-            }
-        }
-    }
-}
-
-@Composable
-fun PlaceholderScreen(title: String, description: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProfileScreen(authViewModel: AuthViewModel, onLogout: () -> Unit) {
-    val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "Operative Profile",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(text = "Email: ${currentUser?.email ?: "N/A"}")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Role: Field Staff / Emergency Responder")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "UID: ${currentUser?.uid ?: "N/A"}", fontSize = 12.sp)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onLogout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = SeverityCritical)
-            ) {
-                Text(
-                    text = "Sign Out",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                ProfileScreen(onLogout = onLogout)
             }
         }
     }
